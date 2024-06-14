@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "concurrent-ruby"
+require "concurrent"
 
 module ViewComponent
   class Compiler
@@ -11,7 +11,8 @@ module ViewComponent
     DEVELOPMENT_MODE = :development
     PRODUCTION_MODE = :production
 
-    class_attribute :mode, default: PRODUCTION_MODE
+    class_attribute :mode
+    self.mode = PRODUCTION_MODE
 
     def initialize(component_class)
       @component_class = component_class

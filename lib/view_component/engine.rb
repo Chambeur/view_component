@@ -124,7 +124,9 @@ module ViewComponent
     end
 
     def serve_static_preview_assets?(app_config)
-      app_config.view_component.show_previews && app_config.public_file_server.enabled
+      app_config.view_component.show_previews &&
+        ((app_config.respond_to?(:public_file_server) && app_config.public_file_server.enabled) ||
+         (app_config.respond_to?(:serve_static_files) && app_config.serve_static_files))
     end
 
     initializer "compiler mode" do |_app|
@@ -133,6 +135,11 @@ module ViewComponent
       else
         ViewComponent::Compiler::PRODUCTION_MODE
       end
+    end
+
+    def call(env)
+      CompileCache.invalidate! unless ActionView::Base.cache_template_loading
+      super
     end
 
     config.after_initialize do |app|
@@ -164,19 +171,19 @@ module ViewComponent
         end
       end
 
-      # :nocov:
-      if RUBY_VERSION < "3.0.0"
-        ViewComponent::Deprecation.deprecation_warning("Support for Ruby versions < 3.0.0", "ViewComponent 4.0 will remove support for Ruby versions < 3.0.0 ")
-      end
+      # # :nocov:
+      # if RUBY_VERSION < "3.0.0"
+      #   ViewComponent::Deprecation.deprecation_warning("Support for Ruby versions < 3.0.0", "ViewComponent 4.0 will remove support for Ruby versions < 3.0.0 ")
+      # end
 
-      if Rails.version.to_f < 6.1
-        ViewComponent::Deprecation.deprecation_warning("Support for Rails versions < 6.1", "ViewComponent 4.0 will remove support for Rails versions < 6.1 ")
-      end
-      # :nocov:
+      # if Rails.version.to_f < 6.1
+      #   ViewComponent::Deprecation.deprecation_warning("Support for Rails versions < 6.1", "ViewComponent 4.0 will remove support for Rails versions < 6.1 ")
+      # end
+      # # :nocov:
 
-      app.executor.to_run :before do
-        CompileCache.invalidate! unless ActionView::Base.cache_template_loading
-      end
+      # app.executor.to_run :before do
+      #   CompileCache.invalidate! unless ActionView::Base.cache_template_loading
+      # end
     end
   end
 end
