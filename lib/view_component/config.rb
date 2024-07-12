@@ -186,7 +186,8 @@ module ViewComponent
     # class so that config options remain accessible before the rest of
     # ViewComponent has loaded. Defaults to an instance of ViewComponent::Config
     # with all other documented defaults set.
-    class_attribute :current, default: defaults, instance_predicate: false
+    class_attribute :current, instance_predicate: false
+    self.current = defaults
 
     def initialize
       @config = self.class.defaults
