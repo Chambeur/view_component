@@ -169,7 +169,7 @@ module ViewComponent
           end
 
           duplicate_template_file_and_inline_variant_calls =
-            templates.pluck(:variant) & variants_from_inline_calls(inline_calls_defined_on_self)
+            templates.map { |t| t[:variant] } & variants_from_inline_calls(inline_calls_defined_on_self)
 
           unless duplicate_template_file_and_inline_variant_calls.empty?
             count = duplicate_template_file_and_inline_variant_calls.count

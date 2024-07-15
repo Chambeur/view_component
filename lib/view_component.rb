@@ -3,6 +3,7 @@
 require "action_view"
 require "active_support/dependencies/autoload"
 require "compat/module/delegate_missing_to"
+require "compat/module/redefine_method"
 
 module ViewComponent
   extend ActiveSupport::Autoload
